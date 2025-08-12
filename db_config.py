@@ -1,6 +1,6 @@
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'Paronasib@123',
+    'password': 'Irsh_2004',
     'database': 'event_booking'
 }
