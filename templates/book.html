@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Event - Event Booking</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .navbar {
+            background-color: #111;
+        }
+
+        .container {
+            margin-top: 40px;
+        }
+
+        .seat-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .seat {
+            width: 40px;
+            height: 40px;
+            background-color: #00c2cb;
+            margin: 5px;
+            border-radius: 6px;
+            display: inline-block;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            color: #000;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .seat:hover {
+            transform: scale(1.1);
+        }
+
+        .selected {
+            background-color: #7fff00;
+        }
+
+        .occupied {
+            background-color: #ff4c4c;
+            cursor: not-allowed;
+            color: #fff;
+        }
+
+        
+        .stage {
+    width: 50%;
+    height: 50px;
+    background-color:#ffc107;
+    border: 2px solid #000;
+    text-align: center;
+    line-height: 50px;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+        h2 {
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        form {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: #ccc;
+        }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .btn-primary {
+            background-color: #00d4ff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #00a6cc;
+        }
+
+        .btn-secondary {
+            background-color: #444;
+        }
+
+        footer {
+            background-color: #111;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 60px;
+        }
+
+        .footer-logo {
+            max-width: 100px;
+        }
+
+        #selected_seat_numbers {
+            color: #7fff00;
+        }
+
+        #show_amount {
+            font-size: 1.1rem;
+        }
+    </style>
+    <script>
+        function calculateAmount() {
+            let seats = document.querySelectorAll(".seat.selected").length;
+            let pricePerSeat = 100;
+            let total = seats * pricePerSeat;
+            document.getElementById("amount").value = total;
+            document.getElementById("show_amount").innerText = "Total Amount: ₹" + total;
+            document.getElementById("seats").value = seats;
+
+            const selectedSeats = Array.from(document.querySelectorAll(".seat.selected")).map(seat => seat.innerText);
+            document.getElementById("selected_seat_numbers").innerText = selectedSeats.join(', ') || "None";
+            document.getElementById("selected_seats").value = selectedSeats.join(',');
+        }
+
+        function toggleSeat(seat) {
+            if (!seat.classList.contains('occupied')) {
+                seat.classList.toggle('selected');
+                calculateAmount();
+            }
+        }
+    </script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark px-4">
+    <a class="navbar-brand" href="{{ url_for('home') }}"><i class="fa-solid fa-ticket-alt me-2"></i>Event Booking</a>
+    <div class="ms-auto">
+        {% if session.name %}
+        <span class="text-white me-3">Hi, {{ session.name }}</span>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-light">Logout</a>
+        {% endif %}
+    </div>
+</nav>
+
+<div class="container">
+    <h2><i class="fa-solid fa-chair me-2"></i>Select Your Seats</h2>
+    <div class="seat-container text-center">
+        <div id="seat-selection">
+            <script>
+                const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+                for (let i = 0; i < rows.length; i++) {
+                    document.write('<div class="row-label">');
+                    document.write('<div>' + rows[i] + '</div>');
+                    for (let j = 1; j <= 10; j++) {
+                        document.write(`<div class="seat" data-seat-number="${rows[i]}${j}" onclick="toggleSeat(this)">${rows[i]}${j}</div>`);
+                    }
+                    document.write('</div>');
+                }
+            </script>
+        </div>
+        <div class="stage">Stage</div>
+    </div>
+
+    <form action="{{ url_for('book_event', event_id=event_id) }}" method="POST">
+        <input type="hidden" name="selected_seats" id="selected_seats">
+        <div class="mb-3">
+            <label>Name:</label>
+            <input type="text" class="form-control" name="applicant_name" required placeholder="Your Full Name">
+        </div>
+        <div class="mb-3">
+            <label>Age:</label>
+            <input type="number" class="form-control" name="age" required placeholder="Your Age">
+        </div>
+        <div class="mb-3">
+            <label>Sex:</label>
+            <select class="form-control" name="sex" required>
+                <option value="" disabled selected>Select</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>ID Proof Number:</label>
+            <input type="text" class="form-control" name="id_proof" required placeholder="Government ID Number">
+        </div>
+        <div class="mb-3">
+            <label>No. of Seats:</label>
+            <input type="number" class="form-control" id="seats" name="seats" readonly required>
+        </div>
+        <div class="mb-3">
+            <label>Selected Seats:</label>
+            <div id="selected_seat_numbers" class="fw-bold">None</div>
+        </div>
+        <div class="mb-3">
+            <label>Amount:</label>
+            <input type="number" class="form-control" name="amount" id="amount" readonly required>
+            <div id="show_amount" class="mt-2 text-info"></div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-circle-check me-2"></i>Confirm Booking</button>
+        <a href="{{ url_for('home') }}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+    </form>
+</div>
+
+<footer>
+    <img src="logo1.png" alt="Logo" class="footer-logo">
+</footer>
+
+</body>
+</html>
