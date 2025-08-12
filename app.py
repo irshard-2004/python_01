@@ -9,7 +9,7 @@ app.secret_key = 'your_secret_key'
 # MySQL Configuration
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Paronasib@123'
+app.config['MYSQL_PASSWORD'] = 'Irsh_2004'
 app.config['MYSQL_DB'] = 'event_booking'
 
 mysql = MySQL(app)
@@ -19,8 +19,8 @@ mysql = MySQL(app)
 app.config['MAIL_SERVER'] = 'smtp.srmist.edu'  # or use 'smtp.gmail.com' if using Gmail
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'ps4017@srmist.edu'
-app.config['MAIL_PASSWORD'] = 'Aalia@123'
+app.config['MAIL_USERNAME'] = 'ih2783@srmist.edu'
+app.config['MAIL_PASSWORD'] = 'Irsh_2004'
 
 
 
